@@ -15,6 +15,6 @@ public final class WindBlowerMod implements ModInitializer {
         WindBlowerConfig.load();
         PayloadTypeRegistry.clientboundPlay().register(WindModePayload.TYPE, WindModePayload.CODEC);
         WindBlowerCommands.register();
-        LOGGER.info("Wind Blower 1.4.1 loaded: /windblow use arms Z gusts; /windblow reUse disarms them.");
+        LOGGER.info("Wind Blower 1.4.2 loaded: /windblow use arms Z gusts; /windblow reUse disarms them.");
     }
 }

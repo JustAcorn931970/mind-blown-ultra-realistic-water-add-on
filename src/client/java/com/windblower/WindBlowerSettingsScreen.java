@@ -176,7 +176,7 @@ public final class WindBlowerSettingsScreen extends Screen {
 
         String title = "WIND BLOWER";
         g.text(font, title, l + 16, 15, TEXT, true);
-        String sub = "PHYSICS CONSOLE   /   FIELD CONTROL  1.4.1";
+        String sub = "PHYSICS CONSOLE   /   FIELD CONTROL  1.4.2";
         fitText(g, sub, l + 16, 32, w - 33, MUTED, false);
         activeGlow += ((WindBlowerClient.isUseModeEnabled() ? 1f : 0f) - activeGlow) * 0.16f;
         int dotColor = WindBlowerClient.isUseModeEnabled() ? TEAL : 0xFF657384;

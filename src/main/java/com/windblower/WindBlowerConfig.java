@@ -122,7 +122,7 @@ public final class WindBlowerConfig {
         p.setProperty("maxspeed", Double.toString(maxSpeed)); p.setProperty("particles", Integer.toString(particles));
         p.setProperty("waterforce", Double.toString(waterForce)); p.setProperty("waterpulse", Integer.toString(waterPulseTicks));
         p.setProperty("blocklaunch", Boolean.toString(blockLaunchEnabled));
-        try { Files.createDirectories(FILE.getParent()); try (Writer writer = Files.newBufferedWriter(FILE)) { p.store(writer, "Wind Blower v1.4.1 settings; runtime caps protect physics performance."); } }
+        try { Files.createDirectories(FILE.getParent()); try (Writer writer = Files.newBufferedWriter(FILE)) { p.store(writer, "Wind Blower v1.4.2 settings; runtime caps protect physics performance."); } }
         catch (IOException ex) { WindBlowerMod.LOGGER.error("Could not save settings to {}", FILE, ex); }
     }
     public static String valueFor(String key) {

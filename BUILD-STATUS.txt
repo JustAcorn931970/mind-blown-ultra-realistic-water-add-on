@@ -1,4 +1,4 @@
-Wind Blower 1.4.1 — source rewrite
+Wind Blower 1.4.2 — source rewrite
 
 Target: Minecraft 26.3 + Fabric, Java 25.
 Compatibility baseline aligned to Ultra Realistic Water branch 26.3-1.2.3:
@@ -18,10 +18,12 @@ Rewritten components:
   scroll-wheel support for small GUI sizes, animated meters, and block/Z toggles.
 - Mod Menu dependency uses the client-only compile configuration; the previous modCompileOnly configuration caused the reported Gradle failure.
 - Minecraft 26.3 key bindings use the explicit InputConstants.Type.KEYBOARD constructor parameter.
+- Fixed 26.3 ClipContext import to net.minecraft.world.level.ClipContext.
+- Removed obsolete hurtMarked field access; motion is synced for affected players with ClientboundSetEntityMotionPacket, while normal entity tracking handles non-player motion.
 - GUI edits are sent to the active world/server via quiet settings commands.
 - Mod Menu entrypoint retained.
 - CI uses a pinned Ubuntu 24.04 runner, JDK 25, and Gradle 9.8.2.
 
-Verification status: source/config checks only. A real Gradle build and in-game test
+Verification status: source/config checks only; the two compile-error patterns from the supplied Actions log are fixed in source. A real Gradle build and in-game test
 could not be run in this environment because it has Java 21 only and no Gradle
 installation. Use the GitHub Actions workflow; do not treat this ZIP as a compiled JAR.

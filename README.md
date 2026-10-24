@@ -1,11 +1,11 @@
-# Wind Blower 1.4.1
+# Wind Blower 1.4.2
 
 Wind Blower is a Fabric mod for Minecraft Java 26.3. It provides a command-armed Z-key gust, an adjustable physics-style settings screen, optional falling-block launches, Mod Menu configuration, and a compatibility bridge for Ultra Realistic Water 26.3-1.2.3.
 
 ## Install
 
 1. Build the JAR with JDK 25 and the included GitHub Actions workflow, or run `build.bat` on Windows.
-2. Put the generated `windblower-26.3-1.4.1.jar` in Minecraft's `mods` folder.
+2. Put the generated `windblower-26.3-1.4.2.jar` in Minecraft's `mods` folder.
 3. Install Fabric API. Install Mod Menu for the optional config entry, and Ultra Realistic Water 26.3-1.2.3 for its compatibility bridge.
 
 ## Controls
@@ -28,4 +28,4 @@ The mod is source-only in this repository. A successful build and in-game test m
 
 ## Optional documentation
 
-`README.md` and `CHANGELOG.md` are documentation only. They are not referenced by Gradle, Java source, resource processing, or the GitHub Actions workflow. You may delete either file without affecting the build.
+`README.md` is documentation only. It is not required by Gradle, Java source, resource processing, or the GitHub Actions workflow. You may delete it without affecting the build.

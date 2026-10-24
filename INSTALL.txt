@@ -1,4 +1,4 @@
-WIND BLOWER 1.4.1 — INSTALL / QUICK START
+WIND BLOWER 1.4.2 — INSTALL / QUICK START
 
 Target: Minecraft Java 26.3, Fabric Loader, Java 25+
 Optional compatibility: Ultra Realistic Water, branch 26.3-1.2.3
@@ -6,7 +6,7 @@ Optional configuration UI: Mod Menu 21.x
 
 INSTALL
 1. Install Fabric for Minecraft 26.3 and launch the game once.
-2. Put the compiled windblower-26.3-1.4.1.jar in the game's mods folder.
+2. Put the compiled windblower-26.3-1.4.2.jar in the game's mods folder.
 3. For water/fluid simulation compatibility, also install Ultra Realistic Water 26.3-1.2.3.
 4. Start the game. Press O for Wind Blower settings or open the config page from Mod Menu.
 

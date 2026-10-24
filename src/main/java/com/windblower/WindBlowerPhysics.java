@@ -3,6 +3,7 @@ package com.windblower;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
@@ -10,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.ClipContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -57,7 +58,11 @@ public final class WindBlowerPhysics {
             double speed = velocity.length();
             if (speed > maxSpeed) velocity = velocity.scale(maxSpeed / speed);
             entity.setDeltaMovement(velocity);
-            entity.hurtMarked = true;
+            // In Minecraft 26.3, hurtMarked was removed. The tracker syncs non-player
+            // entities; the affected player also needs an explicit motion packet.
+            if (entity instanceof ServerPlayer targetPlayer) {
+                targetPlayer.connection.send(new ClientboundSetEntityMotionPacket(targetPlayer));
+            }
         }
 
         if (WindBlowerConfig.blockLaunchEnabled) launchHitBlock(player, origin, end, look, level);
@@ -82,7 +87,7 @@ public final class WindBlowerPhysics {
         Vec3 velocity = look.scale(Math.min(1.8 + WindBlowerConfig.effectiveStrength() * 0.65, WindBlowerConfig.effectiveMaxSpeed()))
                 .add(0.0, 0.24 + WindBlowerConfig.effectiveLift(), 0.0);
         block.setDeltaMovement(velocity);
-        block.hurtMarked = true;
+        // Falling-block velocity is tracked by Minecraft's entity tracker in 26.3.
     }
 
     private static boolean isRealisticBody(Entity entity) {

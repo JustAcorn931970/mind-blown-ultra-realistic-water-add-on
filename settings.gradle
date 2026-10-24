@@ -5,4 +5,4 @@ pluginManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'WindBlower-26.3-Fabric-1.4.1'
+rootProject.name = 'WindBlower-26.3-Fabric-1.4.2'
