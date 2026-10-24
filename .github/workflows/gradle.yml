@@ -1,0 +1,80 @@
+name: Build Wind Blower JAR
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build for Minecraft 26.3 + Fabric
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle 9.8.2
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '9.8.2'
+          cache-provider: basic
+
+      - name: Build mod against Minecraft and Fabric
+        run: gradle --no-daemon --stacktrace clean build
+
+      - name: Verify generated JAR
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          MOD_VERSION="$(sed -n 's/^mod_version=//p' gradle.properties | head -n 1 | tr -d '\r')"
+          ARCHIVE_BASE="$(sed -n 's/^archives_base_name=//p' gradle.properties | head -n 1 | tr -d '\r')"
+          test -n "$MOD_VERSION"
+          test -n "$ARCHIVE_BASE"
+          JAR="build/libs/${ARCHIVE_BASE}-${MOD_VERSION}.jar"
+          echo "Expected JAR: $JAR"
+          ls -la build/libs
+          test -f "$JAR"
+
+          python3 - "$JAR" "$MOD_VERSION" <<'PYTHON'
+          import json
+          import sys
+          import zipfile
+
+          jar_path, expected_version = sys.argv[1], sys.argv[2]
+          with zipfile.ZipFile(jar_path) as archive:
+              names = set(archive.namelist())
+              if "fabric.mod.json" not in names:
+                  raise SystemExit("JAR is missing fabric.mod.json")
+              metadata = json.loads(archive.read("fabric.mod.json").decode("utf-8"))
+          if metadata.get("id") != "windblower":
+              raise SystemExit(f"Unexpected mod id: {metadata.get('id')!r}")
+          if metadata.get("version") != expected_version:
+              raise SystemExit(
+                  f"Version mismatch: project={expected_version}, JAR={metadata.get('version')}"
+              )
+          print(f"Verified {jar_path}: mod id={metadata['id']}, version={metadata['version']}")
+          PYTHON
+
+          echo "jar_path=$JAR" >> "$GITHUB_OUTPUT"
+          echo "mod_version=$MOD_VERSION" >> "$GITHUB_OUTPUT"
+          echo 'JAR structure and metadata verified. In-game behavior still needs testing.'
+
+      - name: Upload the built JAR directly
+        uses: actions/upload-artifact@v7
+        with:
+          name: Wind-Blower-${{ steps.verify.outputs.mod_version }}-JAR
+          path: ${{ steps.verify.outputs.jar_path }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
