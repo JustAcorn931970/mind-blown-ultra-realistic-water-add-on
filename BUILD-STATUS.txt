@@ -1,0 +1,24 @@
+Wind Blower 1.4.0 — source rewrite
+
+Target: Minecraft 26.3 + Fabric, Java 25.
+Compatibility baseline aligned to Ultra Realistic Water branch 26.3-1.2.3:
+- Fabric Loader 0.19.5
+- Fabric API 0.161.0+26.3
+- Fabric Loom 1.18-SNAPSHOT
+- Gradle 9.7.1
+
+Rewritten components:
+- Removed the handheld item / grab-and-throw registration and classes.
+- /windblow use and /windblow reUse synchronise the player's Z-arm state.
+- Server gust logic supports bounded entity impulses, normal falling-block launch,
+  and reflective calls to Ultra Realistic Water RealisticPhysics.push.
+- Client water bridge targets WaterWorld#get and WaterWorld#onExplosion(Vec3,float),
+  with a cached reflective API and conservative radius/cooldown.
+- Responsive dark physics-console settings screen with tabs, numeric fields,
+  scroll-wheel support for small GUI sizes, animated meters, and block/Z toggles.
+- Mod Menu entrypoint retained.
+- CI uses a pinned Ubuntu 24.04 runner, JDK 25, and Gradle 9.7.1.
+
+Verification status: source/config checks only. A real Gradle build and in-game test
+could not be run in this environment because it has Java 21 only and no cached Gradle
+installation. Use the GitHub Actions workflow; do not treat this ZIP as a compiled JAR.

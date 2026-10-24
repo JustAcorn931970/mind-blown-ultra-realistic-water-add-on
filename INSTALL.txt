@@ -1,0 +1,39 @@
+WIND BLOWER 1.4.0 — INSTALL / QUICK START
+
+Target: Minecraft Java 26.3, Fabric Loader, Java 25+
+Optional compatibility: Ultra Realistic Water, branch 26.3-1.2.3
+Optional configuration UI: Mod Menu 21.x
+
+INSTALL
+1. Install Fabric for Minecraft 26.3 and launch the game once.
+2. Put the compiled windblower-26.3-1.4.0.jar in the game's mods folder.
+3. For water/fluid simulation compatibility, also install Ultra Realistic Water 26.3-1.2.3.
+4. Start the game. Press O for Wind Blower settings or open the config page from Mod Menu.
+
+CONTROLS
+/windblow use       Arms Z gusts for the current player.
+/windblow reUse      Disarms Z gusts.
+Z                    Releases a wind impulse while armed.
+O                    Opens the settings screen.
+/windblow settings   Lists commands and current values.
+/windblow set <name> <value>
+/windblow reset      Restores Wind Blower defaults.
+
+Supported settings: range, strength, cone, lift, maxspeed, particles,
+waterforce, waterpulse, blocklaunch. Values are stored up to 999 where
+appropriate; the simulation applies safe runtime caps to protect performance.
+Set blocklaunch to 0 or 1, or use the toggle in the settings screen.
+
+NOTES
+- No handheld tool is required or registered.
+- Standard entity velocity and normal falling-block launch are server-side.
+- Ultra Realistic Water fluid reactions are client-side because that mod's
+  WaterWorld API is client-side. Enable its TNT reactions in /water gui.
+- The 1.2.3 branch exposes a radial onExplosion hook, not a directional wind
+  API. Water impulses therefore use a very small radius and a minimum 6-tick
+  interval. The visual simulation may be empty or disabled until regions load.
+- Realistic converted blocks are pushed through RealisticPhysics.push when the
+  Realistic Water mod is installed. Other custom block entities are protected
+  from automatic falling-block conversion.
+- This source archive is not a precompiled JAR. Use GitHub Actions or the
+  supplied build.bat on a machine with JDK 25 and an internet connection.

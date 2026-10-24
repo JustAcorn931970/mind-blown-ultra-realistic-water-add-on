@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "windblower",
+  "version": "${version}",
+  "name": "Wind Blower",
+  "description": "A command-armed directional wind field with realistic-physics body support, optional falling-block launch, a responsive settings console, and an Ultra Realistic Water 1.2.3 bridge.",
+  "authors": [
+    "OpenAI"
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.windblower.WindBlowerMod"
+    ],
+    "client": [
+      "com.windblower.WindBlowerClient"
+    ],
+    "modmenu": [
+      "com.windblower.WindBlowerModMenu"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

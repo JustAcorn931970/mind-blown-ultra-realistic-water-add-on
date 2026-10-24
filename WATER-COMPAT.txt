@@ -1,0 +1,34 @@
+ULTRA REALISTIC WATER COMPATIBILITY DETAILS
+
+Target upstream project:
+https://github.com/sskaffy/Realistic-Water/tree/26.3-1.2.3
+
+Confirmed upstream API surface in that branch:
+- me.skaffy.client.water.WaterWorld#get()
+- WaterWorld#onExplosion(net.minecraft.world.phys.Vec3, float)
+- WaterWorld#isRealistic(net.minecraft.world.level.material.FluidState)
+- me.skaffy.realistic.RealisticPhysics#push(RealisticBlockEntity, 9 doubles)
+- me.skaffy.realistic.RealisticBlockEntity is the realistic physics-body entity.
+
+The client compatibility bridge resolves WaterWorld by reflection so Wind Blower
+can still run if Ultra Realistic Water is not installed, or if a future version
+changes its API. Its API lookup is cached. Errors are caught and logged once;
+vanilla entity gusts remain available.
+
+WaterWorld.onExplosion is a radial TNT-reaction hook and returns without doing
+anything when TNT reactions are disabled or when no simulation regions exist.
+It is not a directional-wind API. Wind Blower uses a small radius and rate limit
+rather than passing raw GUI values directly into the water simulation.
+
+Block behavior is intentionally bounded:
+- Living entities, item entities, and other normal entities receive a clamped
+  velocity impulse in the forward field.
+- RealisticBlockEntity objects use RealisticPhysics.push with a bounded target,
+  force, and kick.
+- Normal non-fluid, non-block-entity blocks in the ray path can be converted
+  to FallingBlockEntity when Block Launch is enabled.
+- Realistic Water's own material blocks are never replaced with vanilla falling
+  blocks. Their simulation receives the client water reaction if the API and
+  user settings allow it.
+- Vanilla water and lava receive lightweight spray particles only; vanilla
+  fluids are not physically moved by this mod.
