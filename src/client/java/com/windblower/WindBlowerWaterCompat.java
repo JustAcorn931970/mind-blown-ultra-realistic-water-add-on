@@ -51,7 +51,7 @@ public final class WindBlowerWaterCompat {
             Api api = api();
             if (api == null || !isCompatibleMaterial(api, fluid, state, material)) return;
 
-            // Upstream 1.2.3 only exposes a radial blast-reaction hook. Keep its radius tiny and rate-limit it;
+            // Upstream 1.2.3 only exposes a radial blast-reaction hook. Keep its radius bounded and rate-limit it;
             // raw GUI values are never passed into the water simulation.
             float radius = (float) Math.max(0.15, WindBlowerConfig.effectiveWaterForce());
             Vec3 center = hit.getLocation().subtract(direction.scale(Math.max(0.15, radius * 0.45)));

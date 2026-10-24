@@ -35,6 +35,7 @@ public final class WindBlowerSettingsScreen extends Screen {
     private String message = "";
     private int messageColor = TEAL;
     private float activeGlow;
+    private Button zModeButton;
 
     public WindBlowerSettingsScreen(Screen parent) { this(parent, 0); }
     public WindBlowerSettingsScreen(Screen parent, int page) {
@@ -86,7 +87,9 @@ public final class WindBlowerSettingsScreen extends Screen {
         int total = btnW * 3 + btnGap * 2, start = (width - total) / 2;
         addRenderableWidget(Button.builder(Component.literal("APPLY"), b -> savePage()).bounds(start, footerY, btnW, 22).build());
         addRenderableWidget(Button.builder(Component.literal("RESET"), b -> {
-            WindBlowerConfig.reset(); scrollOffset = 0; setMessage("Factory profile restored.", true); rebuild();
+            WindBlowerConfig.reset();
+            WindBlowerClient.syncServerReset();
+            scrollOffset = 0; setMessage("Factory profile restored.", true); rebuild();
         }).bounds(start + btnW + btnGap, footerY, btnW, 22).build());
         addRenderableWidget(Button.builder(Component.literal("DONE"), b -> { if (savePage()) onClose(); })
                 .bounds(start + (btnW + btnGap) * 2, footerY, btnW, 22).build());
@@ -97,10 +100,11 @@ public final class WindBlowerSettingsScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal("BLOCK LAUNCH  ·  " + (WindBlowerConfig.blockLaunchEnabled ? "ON" : "OFF")), b -> {
             if (!savePage()) return;
             WindBlowerConfig.setBlockLaunchEnabled(!WindBlowerConfig.blockLaunchEnabled);
+            WindBlowerClient.syncServerSetting("blocklaunch", WindBlowerConfig.blockLaunchEnabled ? 1.0 : 0.0);
             setMessage("Block launch " + (WindBlowerConfig.blockLaunchEnabled ? "enabled" : "disabled") + ".", true);
             rebuild();
         }).bounds(l + 13, toggleY, toggleWidth, 19).build());
-        addRenderableWidget(Button.builder(Component.literal("Z GUST  ·  " + (WindBlowerClient.isUseModeEnabled() ? "ARMED" : "OFF")), b -> {
+        zModeButton = addRenderableWidget(Button.builder(zModeLabel(), b -> {
             if (minecraft.player != null) minecraft.player.connection.sendCommand(WindBlowerClient.isUseModeEnabled() ? "windblow reUse" : "windblow use");
         }).bounds(l + 13 + toggleWidth + toggleGap, toggleY, toggleWidth, 19).build());
     }
@@ -117,13 +121,18 @@ public final class WindBlowerSettingsScreen extends Screen {
             } catch (NumberFormatException ex) { setMessage("Enter a number in every visible field.", false); return false; }
         }
         if (!WindBlowerConfig.setAll(values)) { setMessage("Settings were not saved; check the values.", false); return false; }
-        setMessage("Saved · changes are active.", true); return true;
+        values.forEach(WindBlowerClient::syncServerSetting);
+        setMessage(minecraft.player == null ? "Saved locally · in-world, click APPLY to sync settings." : "Saved · settings sent to the world.", true);
+        return true;
     }
     private void switchPage(int next) {
         if (next == page) return;
         if (savePage()) minecraft.gui.setScreen(new WindBlowerSettingsScreen(parent, next));
     }
     private void setMessage(String text, boolean success) { message = text; messageColor = success ? TEAL : RED; }
+    private static Component zModeLabel() {
+        return Component.literal("Z GUST  ·  " + (WindBlowerClient.isUseModeEnabled() ? "ARMED" : "OFF"));
+    }
     private void fitText(GuiGraphicsExtractor g, String text, int x, int y, int maxWidth, int color, boolean shadow) {
         if (maxWidth < 1) return;
         String out = text;
@@ -139,13 +148,14 @@ public final class WindBlowerSettingsScreen extends Screen {
             case "lift" -> WindBlowerConfig.effectiveLift() / 0.6;
             case "maxspeed" -> WindBlowerConfig.effectiveMaxSpeed() / 8.0;
             case "particles" -> WindBlowerConfig.effectiveParticles() / 16.0;
-            case "waterforce" -> WindBlowerConfig.effectiveWaterForce() / 0.25;
+            case "waterforce" -> WindBlowerConfig.effectiveWaterForce() / 0.95;
             case "waterpulse" -> Math.min(1.0, WindBlowerConfig.effectiveWaterPulseTicks() / 24.0);
             default -> 0.0;
         };
     }
 
     @Override public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
+        if (zModeButton != null) zModeButton.setMessage(zModeLabel());
         int l = left(), w = panelWidth(), right = l + w;
         g.fill(0, 0, width, height, 0xD9070B10);
         g.fill(l, 5, right, height - 5, OUTER);
@@ -166,7 +176,7 @@ public final class WindBlowerSettingsScreen extends Screen {
 
         String title = "WIND BLOWER";
         g.text(font, title, l + 16, 15, TEXT, true);
-        String sub = "PHYSICS CONSOLE   /   FIELD CONTROL  1.4.0";
+        String sub = "PHYSICS CONSOLE   /   FIELD CONTROL  1.4.1";
         fitText(g, sub, l + 16, 32, w - 33, MUTED, false);
         activeGlow += ((WindBlowerClient.isUseModeEnabled() ? 1f : 0f) - activeGlow) * 0.16f;
         int dotColor = WindBlowerClient.isUseModeEnabled() ? TEAL : 0xFF657384;

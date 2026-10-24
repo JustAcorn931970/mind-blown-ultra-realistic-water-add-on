@@ -3,7 +3,7 @@ setlocal EnableExtensions
 pushd "%~dp0"
 
 rem Build with authentic Minecraft 26.3 + Fabric dependencies. No patched bytecode or API stubs.
-set "GRADLE_VERSION=9.7.1"
+set "GRADLE_VERSION=9.8.2"
 set "TOOLS_DIR=%~dp0.tools"
 set "GRADLE_HOME=%TOOLS_DIR%\gradle-%GRADLE_VERSION%"
 set "GRADLE_ZIP=%TOOLS_DIR%\gradle-%GRADLE_VERSION%-bin.zip"

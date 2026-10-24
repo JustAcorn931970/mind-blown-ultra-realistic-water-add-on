@@ -1,11 +1,11 @@
-Wind Blower 1.4.0 — source rewrite
+Wind Blower 1.4.1 — source rewrite
 
 Target: Minecraft 26.3 + Fabric, Java 25.
 Compatibility baseline aligned to Ultra Realistic Water branch 26.3-1.2.3:
 - Fabric Loader 0.19.5
 - Fabric API 0.161.0+26.3
 - Fabric Loom 1.18-SNAPSHOT
-- Gradle 9.7.1
+- Gradle 9.8.2
 
 Rewritten components:
 - Removed the handheld item / grab-and-throw registration and classes.
@@ -16,9 +16,12 @@ Rewritten components:
   with a cached reflective API and conservative radius/cooldown.
 - Responsive dark physics-console settings screen with tabs, numeric fields,
   scroll-wheel support for small GUI sizes, animated meters, and block/Z toggles.
+- Mod Menu dependency uses the client-only compile configuration; the previous modCompileOnly configuration caused the reported Gradle failure.
+- Minecraft 26.3 key bindings use the explicit InputConstants.Type.KEYBOARD constructor parameter.
+- GUI edits are sent to the active world/server via quiet settings commands.
 - Mod Menu entrypoint retained.
-- CI uses a pinned Ubuntu 24.04 runner, JDK 25, and Gradle 9.7.1.
+- CI uses a pinned Ubuntu 24.04 runner, JDK 25, and Gradle 9.8.2.
 
 Verification status: source/config checks only. A real Gradle build and in-game test
-could not be run in this environment because it has Java 21 only and no cached Gradle
+could not be run in this environment because it has Java 21 only and no Gradle
 installation. Use the GitHub Actions workflow; do not treat this ZIP as a compiled JAR.

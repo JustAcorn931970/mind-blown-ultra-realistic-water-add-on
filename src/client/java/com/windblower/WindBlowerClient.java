@@ -16,8 +16,8 @@ public final class WindBlowerClient implements ClientModInitializer {
 
     @Override public void onInitializeClient() {
         KeyMapping.Category category = KeyMapping.Category.register(WindBlowerMod.id("controls"));
-        openSettings = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.windblower.open_settings", InputConstants.KEY_O, category));
-        gust = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.windblower.gust", InputConstants.KEY_Z, category));
+        openSettings = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.windblower.open_settings", InputConstants.Type.KEYBOARD, InputConstants.KEY_O, category));
+        gust = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.windblower.gust", InputConstants.Type.KEYBOARD, InputConstants.KEY_Z, category));
 
         ClientPlayNetworking.registerGlobalReceiver(WindModePayload.TYPE,
                 (payload, context) -> context.client().execute(() -> useModeEnabled = payload.enabled()));
@@ -38,6 +38,22 @@ public final class WindBlowerClient implements ClientModInitializer {
                 }
             }
         });
+    }
+
+
+    /** Applies edited client settings to the connected world/server without flooding chat. */
+    public static void syncServerSetting(String key, double value) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.player.connection == null) return;
+        String safeValue = Double.toString(value);
+        client.player.connection.sendCommand("windblow set " + key + " " + safeValue + " silent");
+    }
+
+    /** Pushes the complete defaults after a local reset. Used only when the player is in a world. */
+    public static void syncServerReset() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.player.connection == null) return;
+        client.player.connection.sendCommand("windblow reset silent");
     }
 
     public static boolean isUseModeEnabled() { return useModeEnabled; }

@@ -41,21 +41,30 @@ public final class WindBlowerCommands {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("setting", StringArgumentType.word())
                                         .then(Commands.argument("value", DoubleArgumentType.doubleArg())
-                                                .executes(context -> {
-                                                    String key = StringArgumentType.getString(context, "setting");
-                                                    double value = DoubleArgumentType.getDouble(context, "value");
-                                                    if (!WindBlowerConfig.set(key, value)) {
-                                                        context.getSource().sendFailure(Component.literal("Invalid setting/value. Run /windblow settings for supported values."));
-                                                        return 0;
-                                                    }
-                                                    context.getSource().sendSuccess(() -> Component.literal("Wind Blower · " + key + " = " + WindBlowerConfig.valueFor(key)), false);
-                                                    return 1;
-                                                }))))
-                        .then(Commands.literal("reset").executes(context -> {
-                            WindBlowerConfig.reset();
-                            context.getSource().sendSuccess(() -> Component.literal("Wind Blower settings reset."), false);
-                            return 1;
-                        }))));
+                                                .executes(context -> setSetting(context.getSource(),
+                                                        StringArgumentType.getString(context, "setting"),
+                                                        DoubleArgumentType.getDouble(context, "value"), false))
+                                                .then(Commands.literal("silent").executes(context -> setSetting(context.getSource(),
+                                                        StringArgumentType.getString(context, "setting"),
+                                                        DoubleArgumentType.getDouble(context, "value"), true))))))
+                        .then(Commands.literal("reset")
+                                .executes(context -> resetSettings(context.getSource(), false))
+                                .then(Commands.literal("silent").executes(context -> resetSettings(context.getSource(), true))))));
+    }
+
+    private static int setSetting(net.minecraft.commands.CommandSourceStack source, String key, double value, boolean silent) {
+        if (!WindBlowerConfig.set(key, value)) {
+            source.sendFailure(Component.literal("Invalid setting/value. Run /windblow settings for supported values."));
+            return 0;
+        }
+        if (!silent) source.sendSuccess(() -> Component.literal("Wind Blower · " + key + " = " + WindBlowerConfig.valueFor(key)), false);
+        return 1;
+    }
+
+    private static int resetSettings(net.minecraft.commands.CommandSourceStack source, boolean silent) {
+        WindBlowerConfig.reset();
+        if (!silent) source.sendSuccess(() -> Component.literal("Wind Blower settings reset."), false);
+        return 1;
     }
 
     private static int setUseMode(ServerPlayer player, boolean enabled) {

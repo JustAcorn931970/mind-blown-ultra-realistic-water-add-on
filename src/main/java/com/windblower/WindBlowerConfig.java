@@ -61,7 +61,11 @@ public final class WindBlowerConfig {
     public static double effectiveLift() { return Math.min(0.6, lift); }
     public static double effectiveMaxSpeed() { return Math.min(8.0, maxSpeed); }
     public static int effectiveParticles() { return Math.min(16, particles); }
-    public static double effectiveWaterForce() { double root = Math.sqrt(Math.max(0.0, waterForce)); return Math.min(0.25, 0.15 + 0.10 * root / (root + 5.0)); }
+    public static double effectiveWaterForce() {
+        // WaterWorld#onExplosion scales simulation work by radius; keep values bounded rather than trusting raw GUI input.
+        double root = Math.sqrt(Math.max(0.0, waterForce));
+        return Math.min(0.95, 0.30 + 0.65 * root / (root + 1.0));
+    }
     public static int effectiveWaterPulseTicks() { return Math.max(6, waterPulseTicks); }
 
     public static boolean isValid(String key, double value) {
@@ -118,7 +122,7 @@ public final class WindBlowerConfig {
         p.setProperty("maxspeed", Double.toString(maxSpeed)); p.setProperty("particles", Integer.toString(particles));
         p.setProperty("waterforce", Double.toString(waterForce)); p.setProperty("waterpulse", Integer.toString(waterPulseTicks));
         p.setProperty("blocklaunch", Boolean.toString(blockLaunchEnabled));
-        try { Files.createDirectories(FILE.getParent()); try (Writer writer = Files.newBufferedWriter(FILE)) { p.store(writer, "Wind Blower v1.4.0 settings; runtime caps protect physics performance."); } }
+        try { Files.createDirectories(FILE.getParent()); try (Writer writer = Files.newBufferedWriter(FILE)) { p.store(writer, "Wind Blower v1.4.1 settings; runtime caps protect physics performance."); } }
         catch (IOException ex) { WindBlowerMod.LOGGER.error("Could not save settings to {}", FILE, ex); }
     }
     public static String valueFor(String key) {
